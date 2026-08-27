@@ -1,7 +1,7 @@
-# Classe Arvore com os atributos id, x, y e volume #
+# Classe Arvore com os atributos fid, x, y e volume
 class Arvore:
-    def __init__(self, id, x, y, volume):
-        self.id = id
+    def __init__(self, fid, x, y, volume):
+        self.fid = fid
         self.x = x
         self.y = y
         self.volume = volume
