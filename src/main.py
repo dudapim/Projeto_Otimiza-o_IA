@@ -17,3 +17,31 @@ print(f"Versão do NumPy: {np.__version__}")
 print(f"Versão do Pandas: {pd.__version__}")
 print(f"Versão do SciPy: {scipy.__version__}")
 print(f"Versão do Matplotlib: {matplotlib.__version__}")
+
+# Importação das funções responsáveis por importar os dados
+from importador import importar_patios, importar_arvores
+
+# 1º PASSO: IMPORTAÇÃO DOS PÁTIOS (Exigência: Pátios antes das árvores)
+# ---------------------------------------------------------
+patios = importar_patios("data/Patios_Inst_01.txt")
+
+print("\n--- DADOS DOS PÁTIOS ---")
+print("Quantidade de pátios:", len(patios))
+print("Primeiro pátio:")
+print("ID:", patios[0].id)
+print("Nome:", patios[0].nome)
+print("X:", patios[0].x)
+print("Y:", patios[0].y)
+
+
+# 2º PASSO: IMPORTAÇÃO DAS ÁRVORES 
+# ---------------------------------------------------------
+arvores = importar_arvores("data/Arvores_Inst_01.txt") 
+
+print("\n--- DADOS DAS ÁRVORES ---")
+print("Quantidade de árvores:", len(arvores))
+print("Primeira árvore:")
+print("ID:", arvores[0].id)
+print("Volume:", arvores[0].volume)
+print("X:", arvores[0].x)
+print("Y:", arvores[0].y)

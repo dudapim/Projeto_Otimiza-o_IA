@@ -4,3 +4,5 @@
 
 # Ignora a pasta de dados para evitar subir planilhas gigantes no GitHub
 data/    
+
+__pycache__/
