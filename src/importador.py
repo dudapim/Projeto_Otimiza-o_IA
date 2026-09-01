@@ -8,7 +8,7 @@ from modelos.arvore import Arvore
 # Função responsável por ler o arquivo de pátios e retornar um dicionário de objetos.
 def importar_patios(caminho_arquivo):
 
-    # Criamos um dicionário vazio em vez de uma lista. 
+    # Criamos um dicionário vazio 
     patios_dict = {} 
     
     # O Pandas lê o arquivo TXT inteiro de uma só vez.
