@@ -71,7 +71,7 @@ matriz_euclidiana = calcular_matriz_euclidiana(arvores, patios)
 print("\n--- MATRIZ DE DISTÂNCIAS EUCLIDIANAS ---")
 print(f"Dimensão da matriz euclidiana: {matriz_euclidiana.shape}")
 
-# 5º PASSO: CRIAÇÃO DOS MAPEAMENTOS DE ÍNDICE
+# 5º PASSO: CRIAÇÃO DOS MAPEAMENTOS DE ÍNDICES
 # ---------------------------------------------------------
 fids_ordem, patios_ordem, arvore_para_idx, patio_para_idx = (
     criar_mapeamentos_indices(arvores, patios)
