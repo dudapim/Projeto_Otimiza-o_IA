@@ -19,77 +19,92 @@ from importador import (
     criar_mapeamentos_indices,
     importar_arvores,
     importar_matriz_distancias,
-    importar_patios,
+    importar_patios,  
 )
 
-# 1º PASSO: IMPORTAÇÃO DOS PÁTIOS 
-# ---------------------------------------------------------
-patios = importar_patios("data/Patios_Inst_01.txt")
+from excecoes import ProjetoOtimizacaoError
+from logger_config import logger
 
-print("\n--- DADOS DOS PÁTIOS ---")
-print("Quantidade de pátios:", len(patios))
+try:
+    # 1º PASSO: IMPORTAÇÃO DOS PÁTIOS 
+    # ---------------------------------------------------------
+    patios = importar_patios("data/Patios_Inst_01.txt")
 
-primeiro_id_patio = list(patios.keys())[0]
-patio_teste = patios[primeiro_id_patio]
+    print("\n--- DADOS DOS PÁTIOS ---")
+    print("Quantidade de pátios:", len(patios))
 
-print("Primeiro pátio:")
-print("ID:", patio_teste.id)
-print("Nome:", patio_teste.nome)
-print("X:", patio_teste.x)
-print("Y:", patio_teste.y)
+    primeiro_id_patio = list(patios.keys())[0]
+    patio_teste = patios[primeiro_id_patio]
 
-# 2º PASSO: IMPORTAÇÃO DAS ÁRVORES 
-# ---------------------------------------------------------
-arvores = importar_arvores("data/Arvores_Inst_01.txt") 
+    print("Primeiro pátio:")
+    print("ID:", patio_teste.id)
+    print("Nome:", patio_teste.nome)
+    print("X:", patio_teste.x)
+    print("Y:", patio_teste.y)
 
-print("\n--- DADOS DAS ÁRVORES ---")
-print("Quantidade de árvores:", len(arvores))
+    # 2º PASSO: IMPORTAÇÃO DAS ÁRVORES 
+    # ---------------------------------------------------------
+    arvores = importar_arvores("data/Arvores_Inst_01.txt") 
 
-primeiro_fid_arvore = list(arvores.keys())[0]
-arvore_teste = arvores[primeiro_fid_arvore]
+    print("\n--- DADOS DAS ÁRVORES ---")
+    print("Quantidade de árvores:", len(arvores))
 
-print("Primeira árvore:")
-print("FID:", arvore_teste.fid)
-print("Volume:", arvore_teste.volume)
-print("X:", arvore_teste.x)
-print("Y:", arvore_teste.y)
+    primeiro_fid_arvore = list(arvores.keys())[0]
+    arvore_teste = arvores[primeiro_fid_arvore]
 
-# 3º PASSO: IMPORTAÇÃO DA MATRIZ DE DISTÂNCIAS REAIS
-# ---------------------------------------------------------
-matriz_distancias = importar_matriz_distancias(
-    "data/Distancias_Inst_01.txt", arvores_dict=arvores, patios_dict=patios
-)
+    print("Primeira árvore:")
+    print("FID:", arvore_teste.fid)
+    print("Volume:", arvore_teste.volume)
+    print("X:", arvore_teste.x)
+    print("Y:", arvore_teste.y)
 
-print("\n--- MATRIZ DE DISTÂNCIAS REAIS ---")
-print("Tipo da matriz:", type(matriz_distancias))
-print(f"Dimensão da matriz (Árvores x Pátios): {matriz_distancias.shape}")
-print("Exemplo [Árvore 0 -> Pátio 0]:", matriz_distancias[0, 0])
+    # 3º PASSO: IMPORTAÇÃO DA MATRIZ DE DISTÂNCIAS REAIS
+    # ---------------------------------------------------------
+    matriz_distancias = importar_matriz_distancias(
+        "data/Distancias_Inst_01.txt", arvores_dict=arvores, patios_dict=patios
+    )
 
-# 4º PASSO: CÁLCULO DAS DISTÂNCIAS EUCLIDIANAS
-# ---------------------------------------------------------
-matriz_euclidiana = calcular_matriz_euclidiana(arvores, patios)
-print("\n--- MATRIZ DE DISTÂNCIAS EUCLIDIANAS ---")
-print(f"Dimensão da matriz euclidiana: {matriz_euclidiana.shape}")
+    print("\n--- MATRIZ DE DISTÂNCIAS REAIS ---")
+    print("Tipo da matriz:", type(matriz_distancias))
+    print(f"Dimensão da matriz (Árvores x Pátios): {matriz_distancias.shape}")
+    print("Exemplo [Árvore 0 -> Pátio 0]:", matriz_distancias[0, 0])
 
-# 5º PASSO: CRIAÇÃO DOS MAPEAMENTOS DE ÍNDICES
-# ---------------------------------------------------------
-fids_ordem, patios_ordem, arvore_para_idx, patio_para_idx = (
-    criar_mapeamentos_indices(arvores, patios)
-)
+    # 4º PASSO: CÁLCULO DAS DISTÂNCIAS EUCLIDIANAS
+    # ---------------------------------------------------------
+    matriz_euclidiana = calcular_matriz_euclidiana(arvores, patios)
+    print("\n--- MATRIZ DE DISTÂNCIAS EUCLIDIANAS ---")
+    print(f"Dimensão da matriz euclidiana: {matriz_euclidiana.shape}")
 
-print("\n--- MAPEAMENTOS CONCLUÍDOS ---")
-print("Total de árvores mapeadas:", len(arvore_para_idx))
-print("Total de pátios mapeados:", len(patio_para_idx))
+    # 5º PASSO: CRIAÇÃO DOS MAPEAMENTOS DE ÍNDICES
+    # ---------------------------------------------------------
+    fids_ordem, patios_ordem, arvore_para_idx, patio_para_idx = (
+        criar_mapeamentos_indices(arvores, patios)
+    )
 
-# 6º PASSO: VERIFICAÇÃO E COMPARAÇÃO PARA A FUNÇÃO OBJETIVO
-# ---------------------------------------------------------
-print("\n--- MATRIZES PRONTAS PARA A FUNÇÃO OBJETIVO ---")
-print(f"Shape Matriz Euclidiana: {matriz_euclidiana.shape}")
-print(f"Shape Matriz Distâncias Reais: {matriz_distancias.shape}")
+    print("\n--- MAPEAMENTOS CONCLUÍDOS ---")
+    print("Total de árvores mapeadas:", len(arvore_para_idx))
+    print("Total de pátios mapeados:", len(patio_para_idx))
 
-# Teste de verificação rápida: Árvore FID 1 -> Pátio ID 1
-idx_arv = arvore_para_idx[1]
-idx_pat = patio_para_idx[1]
+    # 6º PASSO: VERIFICAÇÃO E COMPARAÇÃO PARA A FUNÇÃO OBJETIVO
+    # ---------------------------------------------------------
+    print("\n--- MATRIZES PRONTAS PARA A FUNÇÃO OBJETIVO ---")
+    print(f"Shape Matriz Euclidiana: {matriz_euclidiana.shape}")
+    print(f"Shape Matriz Distâncias Reais: {matriz_distancias.shape}")
 
-print(f"Distância Euclidiana [Árvore 1 -> Pátio 1]: {matriz_euclidiana[idx_arv, idx_pat]:.4f} m")
-print(f"Distância Real       [Árvore 1 -> Pátio 1]: {matriz_distancias[idx_arv, idx_pat]:.4f} m")
+    # Teste de verificação rápida: Árvore FID 1 -> Pátio ID 1
+    idx_arv = arvore_para_idx[1]
+    idx_pat = patio_para_idx[1]
+
+    print(f"Distância Euclidiana [Árvore 1 -> Pátio 1]: {matriz_euclidiana[idx_arv, idx_pat]:.4f} m")
+    print(f"Distância Real       [Árvore 1 -> Pátio 1]: {matriz_distancias[idx_arv, idx_pat]:.4f} m")
+
+except ProjetoOtimizacaoError as e:
+    logger.critical(f"Execução interrompida por erro no domínio da aplicação: {e}")
+    print(f"\n❌ Erro: {e}")
+    print("Verifique o arquivo de log em logs/ para mais detalhes.")
+
+except Exception as e:
+    # Captura qualquer erro inesperado que não seja das nossas exceções customizadas
+    logger.exception(f"Erro inesperado durante a execução: {e}")
+    print(f"\n❌ Erro inesperado: {e}")
+    print("Verifique o arquivo de log em logs/ para mais detalhes.")
