@@ -24,10 +24,10 @@ from importador import (
 
 from excecoes import ProjetoOtimizacaoError
 from logger_config import logger
+from funcao_objetivo import calcular_fo_patio
 
 try:
     # 1º PASSO: IMPORTAÇÃO DOS PÁTIOS 
-    # ---------------------------------------------------------
     patios = importar_patios("data/Patios_Inst_01.txt")
 
     print("\n--- DADOS DOS PÁTIOS ---")
@@ -43,9 +43,13 @@ try:
     print("Y:", patio_teste.y)
 
     # 2º PASSO: IMPORTAÇÃO DAS ÁRVORES 
-    # ---------------------------------------------------------
     arvores = importar_arvores("data/Arvores_Inst_01.txt") 
 
+    #Foi adicionado o vetor de volumes para a arvores 
+    volumes_arvores = np.array(
+        [arvore.volume for arvore in arvores.values()],
+        dtype = np.float64
+    )
     print("\n--- DADOS DAS ÁRVORES ---")
     print("Quantidade de árvores:", len(arvores))
 
@@ -59,7 +63,6 @@ try:
     print("Y:", arvore_teste.y)
 
     # 3º PASSO: IMPORTAÇÃO DA MATRIZ DE DISTÂNCIAS REAIS
-    # ---------------------------------------------------------
     matriz_distancias = importar_matriz_distancias(
         "data/Distancias_Inst_01.txt", arvores_dict=arvores, patios_dict=patios
     )
@@ -70,13 +73,11 @@ try:
     print("Exemplo [Árvore 0 -> Pátio 0]:", matriz_distancias[0, 0])
 
     # 4º PASSO: CÁLCULO DAS DISTÂNCIAS EUCLIDIANAS
-    # ---------------------------------------------------------
     matriz_euclidiana = calcular_matriz_euclidiana(arvores, patios)
     print("\n--- MATRIZ DE DISTÂNCIAS EUCLIDIANAS ---")
     print(f"Dimensão da matriz euclidiana: {matriz_euclidiana.shape}")
 
     # 5º PASSO: CRIAÇÃO DOS MAPEAMENTOS DE ÍNDICES
-    # ---------------------------------------------------------
     fids_ordem, patios_ordem, arvore_para_idx, patio_para_idx = (
         criar_mapeamentos_indices(arvores, patios)
     )
@@ -86,7 +87,6 @@ try:
     print("Total de pátios mapeados:", len(patio_para_idx))
 
     # 6º PASSO: VERIFICAÇÃO E COMPARAÇÃO PARA A FUNÇÃO OBJETIVO
-    # ---------------------------------------------------------
     print("\n--- MATRIZES PRONTAS PARA A FUNÇÃO OBJETIVO ---")
     print(f"Shape Matriz Euclidiana: {matriz_euclidiana.shape}")
     print(f"Shape Matriz Distâncias Reais: {matriz_distancias.shape}")
@@ -98,6 +98,28 @@ try:
     print(f"Distância Euclidiana [Árvore 1 -> Pátio 1]: {matriz_euclidiana[idx_arv, idx_pat]:.4f} m")
     print(f"Distância Real       [Árvore 1 -> Pátio 1]: {matriz_distancias[idx_arv, idx_pat]:.4f} m")
 
+    # TESTE DA FO 1 ):
+    # Selecionando alguns patios apenas de teste 
+    patios_selecionados = [0, 1, 2]
+
+    dist_max = 5000.0
+    penalidade = 100.0
+    vol_maximo = 10000.0
+    
+    solucao_atual = calcular_fo_patio(
+        matriz_distancias,
+        patios_selecionados,
+        volumes_arvores,
+        dist_max,
+        penalidade,
+        vol_maximo
+    )
+    
+    print("\n--- TESTE DA FUNÇÃO OBJETIVO ---")
+    print("Pátios selecionados:", solucao_atual.patios_selecionados)
+    print("Distância total:", solucao_atual.distancia_total)
+    print("A solução é viável?", solucao_atual.viavel)
+
 except ProjetoOtimizacaoError as e:
     logger.critical(f"Execução interrompida por erro no domínio da aplicação: {e}")
     print(f"\n❌ Erro: {e}")
@@ -108,3 +130,7 @@ except Exception as e:
     logger.exception(f"Erro inesperado durante a execução: {e}")
     print(f"\n❌ Erro inesperado: {e}")
     print("Verifique o arquivo de log em logs/ para mais detalhes.")
+
+
+
+

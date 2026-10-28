@@ -17,7 +17,16 @@ def importar_patios(caminho_arquivo):
     
     # O Pandas lê o arquivo TXT inteiro de uma só vez.
     try:
-        df_patios = pd.read_csv(caminho_arquivo, sep='\t')
+        df_patios = pd.read_csv(
+            caminho_arquivo,
+            sep="\t",
+            dtype={
+                "id": "int64",
+                "nome": "string",
+                "x": "float64",
+                "y": "float64"
+            }
+        )
     except FileNotFoundError:
         logger.error(f"Arquivo de pátios não encontrado: {caminho_arquivo}")
         raise ArquivoDadosNaoEncontradoError (f"Arquivo de pátios não encontrado: {caminho_arquivo}")
@@ -49,7 +58,16 @@ def importar_arvores(caminho_arquivo):
     
     # Leitura do arquivo TXT com Pandas
     try: 
-        df_arvores = pd.read_csv(caminho_arquivo, sep='\t')
+        df_arvores = pd.read_csv(
+            caminho_arquivo,
+            sep="\t",
+            dtype={
+                "FID": "int64",
+                "POINT_X": "float64",
+                "POINT_Y": "float64",
+                "Volume_Eq": "float64"
+            }
+        )
     except FileNotFoundError:
         logger.error(f"Arquivo de árvores não encontrado: {caminho_arquivo}")
         raise ArquivoDadosNaoEncontradoError(f"Arquivo de árvore não encontrado: {caminho_arquivo}")
@@ -78,11 +96,23 @@ def importar_arvores(caminho_arquivo):
 def importar_matriz_distancias(caminho_arquivo, arvores_dict, patios_dict):
     try:
         # O Pandas lê o arquivo TXT inteiro de uma só vez.
-        df_dist = pd.read_csv(caminho_arquivo, sep="\t")
+        df_dist = pd.read_csv(
+            caminho_arquivo,
+            sep="\t",
+            dtype={
+                "id": "int64",
+                "arvore": "int64",
+                "patio": "int64",
+                "distancia_total": "float64"
+            }
+        )
     except FileNotFoundError:
         logger.error(f"Arquivo de distâncias não encontrado: {caminho_arquivo}")
         raise ArquivoDadosNaoEncontradoError(f"Arquivo de distâncias não encontrados: {caminho_arquivo}")
 
+    except pd.errors.EmptyDataError:
+        logger.error(f"Arquivo de distâncias está vazio: {caminho_arquivo}")
+        raise DadosInconsistentesError(  f"Arquivo de distâncias vazio: {caminho_arquivo}")
     try:
         # Pivotamos os dados para cruzar árvores nas linhas e pátios nas colunas.
         df_pivot = df_dist.pivot(index="arvore", columns="patio", values="distancia_total")
