@@ -25,7 +25,7 @@ from importador import (
 from excecoes import ProjetoOtimizacaoError
 from logger_config import logger
 from funcao_objetivo import calcular_fo_patio
-
+from heuristicas import obter_solucao_aleatoria
 try:
     # 1º PASSO: IMPORTAÇÃO DOS PÁTIOS 
     patios = importar_patios("data/Patios_Inst_01.txt")
@@ -120,6 +120,31 @@ try:
     print("Distância total:", solucao_atual.distancia_total)
     print("A solução é viável?", solucao_atual.viavel)
 
+    # 7º PASSO: TESTE DA SOLUÇÃO ALEATÓRIA
+    # Criamos a lista de todos os índices possíveis de pátios (0 até n-1)
+    todos_indices_patios = list(range(len(patios)))
+    
+    qtd_patios = 3  # Quantidade de pátios que a heurística deve sortear
+    dist_max = 5000.0
+    penalidade = 100.0
+    vol_maximo = 10000.0
+    
+    # Chama a nova função que você criou no arquivo heuristicas.py
+    solucao_aleatoria = obter_solucao_aleatoria(
+        todos_indices_patios,
+        qtd_patios,
+        matriz_distancias,
+        volumes_arvores,
+        dist_max,
+        penalidade,
+        vol_maximo
+    )
+    
+    print("\n--- TESTE DA SOLUÇÃO ALEATÓRIA ---")
+    print("Pátios sorteados:", solucao_aleatoria.patios_selecionados)
+    print("Distância total (com penalizações):", solucao_aleatoria.distancia_total)
+    print("A solução é viável?:", solucao_aleatoria.viavel)
+    
 except ProjetoOtimizacaoError as e:
     logger.critical(f"Execução interrompida por erro no domínio da aplicação: {e}")
     print(f"\n❌ Erro: {e}")
