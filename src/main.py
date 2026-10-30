@@ -25,7 +25,7 @@ from importador import (
 from excecoes import ProjetoOtimizacaoError
 from logger_config import logger
 from funcao_objetivo import calcular_fo_patio
-from heuristicas import obter_solucao_aleatoria
+from heuristicas import obter_solucao_aleatoria, heuristica_construtiva_iter, heuristica_construtiva_tempo
 try:
     # 1º PASSO: IMPORTAÇÃO DOS PÁTIOS 
     patios = importar_patios("data/Patios_Inst_01.txt")
@@ -144,6 +144,32 @@ try:
     print("Pátios sorteados:", solucao_aleatoria.patios_selecionados)
     print("Distância total (com penalizações):", solucao_aleatoria.distancia_total)
     print("A solução é viável?:", solucao_aleatoria.viavel)
+
+    # 7º PASSO: TESTE DA HEURÍSTICA CONSTRUTIVA
+    todos_indices_patios = list(range(len(patios)))
+    qtd_patios = 3 
+    dist_max = 5000.0
+    penalidade = 100.0
+    vol_maximo = 10000.0
+    
+    print("\n--- INICIANDO HEURÍSTICA CONSTRUTIVA (1000 ITERAÇÕES) ---")
+    melhor_solucao = heuristica_construtiva_iter(
+        todos_indices_patios,
+        qtd_patios,
+        matriz_distancias,
+        volumes_arvores,
+        dist_max,
+        penalidade,
+        vol_maximo,
+        num_iteracoes=1000
+    )
+    
+    print("Melhores Pátios:", melhor_solucao.patios_selecionados)
+    print(f"Menor Distância Encontrada: {melhor_solucao.distancia_total:.4f}")
+    print(f"A solução é viável?: {melhor_solucao.viavel}")
+    print(f"Tempo total de busca: {melhor_solucao.tempo_total:.4f}s")
+    print(f"Encontrou a melhor solução no tempo: {melhor_solucao.tempo_solucao:.4f}s")
+    print(f"Soluções Viáveis: {melhor_solucao.num_viaveis} | Inviáveis: {melhor_solucao.num_inviaveis}")
     
 except ProjetoOtimizacaoError as e:
     logger.critical(f"Execução interrompida por erro no domínio da aplicação: {e}")
